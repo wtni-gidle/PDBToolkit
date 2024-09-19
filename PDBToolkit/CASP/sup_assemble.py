@@ -68,7 +68,7 @@ if __name__ == '__main__':
     parser.add_argument('target_dir', type=str, help="Directory containing structure B PDB files.")
     parser.add_argument('output_path', type=str, help="Path to save the merged PDB file.")
     parser.add_argument('--no_renumber', action='store_true', help='Do not renumber atoms in the structure.')
-    parser.add_argument('--extra_args', nargs='*', default=['-ter', '0', '-TMscore', '7'], help='Additional arguments for USalign.')
+    parser.add_argument('--extra_args', nargs='*', default=None, help='Additional arguments for USalign.')
     args = parser.parse_args()
 
     print("-----------------------------------------------------------------------------", flush=True)

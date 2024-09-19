@@ -71,7 +71,12 @@ def main(args):
     tmscore_dict = process_in_parallel(model_dir, reference_file, sup_dir, args.extra_args, args.n_cpu)
     tmscore_dict = {os.path.basename(k): v for k, v in tmscore_dict.items()}
     tmscore_df = pd.DataFrame({"model": tmscore_dict.keys(), "tmscore": tmscore_dict.values()})
-    tmscore_df.to_csv(os.path.join(sup_dir, "tmscore.csv"), index=False, sep="\t")
+    
+    if args.output_file is not None:
+        output_path = os.path.abspath(args.output_file)
+    else:
+        output_path = os.path.join(sup_dir, "tmscore.csv")
+    tmscore_df.to_csv(output_path, index=False, sep="\t")
     
     for filename in os.listdir(sup_dir):
         if filename.endswith(".pml"):
@@ -86,6 +91,7 @@ if __name__ == "__main__":
     parser.add_argument("model_dir", help="Directory containing model files to process.")
     parser.add_argument("reference", help="Reference PDB file.")
     parser.add_argument("--sup_dir", help="Directory to save the output PDB files.")
+    parser.add_argument("--output_file", help="Output file to save the TM-score results.")
     parser.add_argument('--extra_args', nargs='*', default=None, 
                         help='Additional arguments for USalign.')
     parser.add_argument("--n_cpu", type=int, default=1, help="Number of CPUs to use.")
@@ -96,5 +102,9 @@ if __name__ == "__main__":
     for key, value in vars(args).items():
         print(f"{key}: {value}", flush=True)
     print("-----------------------------------------------------------------------------", flush=True)
+    
+    options = [args.output_file, args.sup_dir]
+    if options.count(None) == 2:
+        raise ValueError("You must specify at least one of --output_file, --sup_dir.")
 
     main(args)
