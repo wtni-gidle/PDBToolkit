@@ -86,7 +86,7 @@ if __name__ == "__main__":
     parser.add_argument("model_dir", help="Directory containing model files to process.")
     parser.add_argument("reference", help="Reference PDB file.")
     parser.add_argument("--sup_dir", help="Directory to save the output PDB files.")
-    parser.add_argument('--extra_args', nargs='*', default=['-ter', '0', '-TMscore', '7', '-atom', "' CA '"], 
+    parser.add_argument('--extra_args', nargs='*', default=None, 
                         help='Additional arguments for USalign.')
     parser.add_argument("--n_cpu", type=int, default=1, help="Number of CPUs to use.")
     args = parser.parse_args()
