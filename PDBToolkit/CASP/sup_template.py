@@ -31,10 +31,13 @@ def run_usalign(model, reference, output_prefix = None, extra_args = None):
         return None
     
     tmscore_pattern = re.compile(r'TM-score\s*=\s*([0-9.]+)')
-    tmscore = float(tmscore_pattern.findall(result.stdout)[1])
-    logging.info(f"TM-score for {model}: {tmscore}")
-
-    return tmscore
+    try:
+        tmscore = float(tmscore_pattern.findall(result.stdout)[1])
+        logging.info(f"TM-score for {model}: {tmscore}")
+        return tmscore
+    except:
+        logging.error(f"Error parsing TM-score for {model}: {result.stdout.strip()}")
+        return None
 
 
 def wrapper(model, reference, output_prefix, extra_args):
@@ -71,7 +74,7 @@ def main(args):
     tmscore_dict = process_in_parallel(model_dir, reference_file, sup_dir, args.extra_args, args.n_cpu)
     tmscore_dict = {os.path.basename(k): v for k, v in tmscore_dict.items()}
     tmscore_df = pd.DataFrame({"model": tmscore_dict.keys(), "tmscore": tmscore_dict.values()})
-    
+
     if args.output_file is not None:
         output_path = os.path.abspath(args.output_file)
     else:
@@ -83,7 +86,7 @@ def main(args):
             file_path = os.path.join(sup_dir, filename)
             os.remove(file_path)
 
-    logging.info(f"Results saved to {os.path.join(sup_dir, 'tmscore.csv')}")
+    logging.info(f"Results saved to {output_path}")
     
 
 if __name__ == "__main__":
